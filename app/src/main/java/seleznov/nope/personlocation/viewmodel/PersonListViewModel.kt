@@ -17,5 +17,4 @@ class PersonListViewModel : ViewModel(), PersonRepository.OnDataReadyCallback {
     override fun onDataReady(data: List<Person>) {
         list.value = data
     }
-
 }

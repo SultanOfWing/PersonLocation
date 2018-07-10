@@ -26,13 +26,13 @@ class Person internal constructor() : BaseObservable() {
             notifyPropertyChanged(BR.email)
         }
     @get:Bindable
-    var lon: Int = 0
+    var lon: Double = 0.0
         set(lon) {
             field = lon
             notifyPropertyChanged(BR.lon)
         }
     @get:Bindable
-    var lat: Int = 0
+    var lat: Double = 0.0
         set(lat) {
             field = lat
             notifyPropertyChanged(BR.lat)

@@ -21,24 +21,16 @@ class PersonRepository(onDataReadyCallback: OnDataReadyCallback) {
     init {
         mFirebaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (ds in dataSnapshot.children) {
+                for (ds in dataSnapshot.child("person").children) {
                     val person = ds.getValue(Person::class.java)
+                    Log.i(TAG, person.toString())
                     mPersonList.add(person!!)
                 }
-                onDataReadyCallback!!.onDataReady(mPersonList)
+                onDataReadyCallback.onDataReady(mPersonList)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.i(TAG, "DatabaseError")
-                val person = Person()
-                person.name = "FFFF"
-                person.email = "dbfbfb"
-                val person1 = Person()
-                person1.name = "vfdfvdv"
-                person1.email = "vsdfvsfv"
-                mPersonList.add(person)
-                mPersonList.add(person1)
-                onDataReadyCallback!!.onDataReady(mPersonList)
+                Log.i(TAG, error.message)
             }
         })
     }
@@ -46,6 +38,5 @@ class PersonRepository(onDataReadyCallback: OnDataReadyCallback) {
     interface OnDataReadyCallback {
         fun onDataReady(data: List<Person>)
     }
-
 
 }
