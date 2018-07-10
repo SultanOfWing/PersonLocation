@@ -1,5 +1,6 @@
 package seleznov.nope.personlocation.viewmodel
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import seleznov.nope.personlocation.model.Person
 import seleznov.nope.personlocation.model.PersonRepository
@@ -8,23 +9,13 @@ import seleznov.nope.personlocation.model.PersonRepository
  * Created by User on 09.07.2018.
  */
 
-class PersonListViewModel : ViewModel() {
-    internal var mPersonRepository = PersonRepository()
-    var mPersonList: List<Person>? = null
+class PersonListViewModel : ViewModel(), PersonRepository.OnDataReadyCallback {
 
-    val onDataReadyCallback = object : PersonRepository.OnDataReadyCallback {
-        override fun onDataReady(data: List<Person>) {
-            mPersonList = data;
-        }
+    internal var mPersonRepository = PersonRepository(this)
+    var list = MutableLiveData<List<Person>>()
+
+    override fun onDataReady(data: List<Person>) {
+        list.value = data
     }
-
-    fun getPersonList():List<Person>?{
-        return mPersonList;
-    }
-
-    fun getPerson(pos:Int):Person{
-        return mPersonList!!.get(pos);
-    }
-
 
 }
