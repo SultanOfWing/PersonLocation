@@ -11,22 +11,23 @@ import com.google.firebase.database.ValueEventListener
 /**
  * Created by User on 09.07.2018.
  */
+private const val TAG = "PersonRepository";
 
 class PersonRepository(onDataReadyCallback: OnDataReadyCallback) {
 
-    private val TAG = "PersonRepository";
-    private val mPersonList = ArrayList<Person>()
-    private val mFirebaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+    private val personList = ArrayList<Person>()
+    private val firebaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
 
     init {
-        mFirebaseRef.addValueEventListener(object : ValueEventListener {
+        firebaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (ds in dataSnapshot.child("person").children) {
                     val person = ds.getValue(Person::class.java)
                     Log.i(TAG, person.toString())
-                    mPersonList.add(person!!)
+                    personList.add(person!!)
                 }
-                onDataReadyCallback.onDataReady(mPersonList)
+                onDataReadyCallback.onDataReady(personList)
             }
 
             override fun onCancelled(error: DatabaseError) {
