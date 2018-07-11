@@ -2,12 +2,26 @@ package seleznov.nope.personlocation.view
 
 import android.Manifest
 import android.location.Location
+import android.os.Bundle
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import seleznov.nope.personlocation.R
 import seleznov.nope.personlocation.helper.PermissionInspector
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.CameraUpdate
+import android.text.method.TextKeyListener.clear
+import com.google.android.gms.maps.model.MarkerOptions
+
+
+
+
 
 /**
  * Created by User on 09.07.2018.
@@ -19,7 +33,9 @@ class MapsFragment : SupportMapFragment() {
             Manifest.permission.ACCESS_COARSE_LOCATION)
     private val REQUEST_LOCATION_PERMISSIONS = 0
 
-    private var googleApi = GoogleApiClient.Builder(activity)
+    private lateinit var googleMap: GoogleMap
+
+    private var googleApi = GoogleApiClient.Builder(context)
             .addApi(LocationServices.API).build()
     private var locationRequest = LocationRequest.create()
     private var provider = LocationServices.FusedLocationApi
@@ -27,7 +43,15 @@ class MapsFragment : SupportMapFragment() {
         override fun onLocationChanged(p0: Location?) {
             //TODO
         }
+    }
 
+    override fun onCreate(p0: Bundle?) {
+        super.onCreate(p0)
+        getMapAsync(object : OnMapReadyCallback {
+            override fun onMapReady(map : GoogleMap) {
+                googleMap = map
+            }
+        })
     }
 
     override fun onStart() {
@@ -60,5 +84,19 @@ class MapsFragment : SupportMapFragment() {
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+    }
+
+    fun showPersonOnMap(lat: Double, lng: Double){
+        val latLng = LatLng(lat, lng)
+        val bounds = LatLngBounds.Builder()
+                .include(latLng).build()
+        val margin = resources.getDimensionPixelSize(R.dimen.map_margin)
+        val update = CameraUpdateFactory.newLatLngBounds(bounds, margin)
+        googleMap.animateCamera(update)
+
+        val myMarker = MarkerOptions()
+                .position(latLng)
+        googleMap.clear()
+        googleMap.addMarker(myMarker)
     }
 }
