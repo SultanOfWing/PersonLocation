@@ -27,7 +27,7 @@ import com.google.android.gms.maps.model.MarkerOptions
  * Created by User on 09.07.2018.
  */
 
-class MapsFragment : SupportMapFragment() {
+class MapsFragment : SupportMapFragment(), GoogleApiClient.ConnectionCallbacks {
 
     private val LOCATION_PERMISSIONS = arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -35,8 +35,8 @@ class MapsFragment : SupportMapFragment() {
 
     private lateinit var googleMap: GoogleMap
 
-    private var googleApi = GoogleApiClient.Builder(context)
-            .addApi(LocationServices.API).build()
+    private lateinit var googleApi: GoogleApiClient
+
     private var locationRequest = LocationRequest.create()
     private var provider = LocationServices.FusedLocationApi
     private var locationListener = object : LocationListener {
@@ -47,6 +47,9 @@ class MapsFragment : SupportMapFragment() {
 
     override fun onCreate(p0: Bundle?) {
         super.onCreate(p0)
+        googleApi=  GoogleApiClient.Builder(activity.applicationContext)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API).build()
         getMapAsync(object : OnMapReadyCallback {
             override fun onMapReady(map : GoogleMap) {
                 googleMap = map
@@ -59,19 +62,15 @@ class MapsFragment : SupportMapFragment() {
         googleApi.connect()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 0
-        if (PermissionInspector.checkPermission(context, LOCATION_PERMISSIONS))
-            provider.requestLocationUpdates(googleApi, locationRequest,
-                    locationListener)
-        else
-            requestPermissions(LOCATION_PERMISSIONS,
-                    REQUEST_LOCATION_PERMISSIONS)
 
     }
 
     override fun onStop() {
         super.onStop()
+        if(googleApi.isConnected){
+            provider.removeLocationUpdates(googleApi, locationListener)
+        }
         googleApi.disconnect()
-        provider.removeLocationUpdates(googleApi, locationListener)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -84,6 +83,19 @@ class MapsFragment : SupportMapFragment() {
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+    }
+
+    override fun onConnectionSuspended(p0: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onConnected(p0: Bundle?) {
+        if (PermissionInspector.checkPermission(context, LOCATION_PERMISSIONS))
+            provider.requestLocationUpdates(googleApi, locationRequest,
+                    locationListener)
+        else
+            requestPermissions(LOCATION_PERMISSIONS,
+                    REQUEST_LOCATION_PERMISSIONS)
     }
 
     fun showPersonOnMap(lat: Double, lng: Double){
