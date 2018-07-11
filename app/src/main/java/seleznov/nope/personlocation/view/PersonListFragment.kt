@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import seleznov.nope.personlocation.R
 import seleznov.nope.personlocation.databinding.FragmentPersonListBinding
+import seleznov.nope.personlocation.helper.EventBus
 import seleznov.nope.personlocation.model.Person
 import seleznov.nope.personlocation.view.adapter.PersonAdapter
 import seleznov.nope.personlocation.viewmodel.PersonListViewModel
@@ -39,7 +40,8 @@ class PersonListFragment : Fragment(), PersonAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val person = binding.viewModel?.list?.value?.get(position)
+        EventBus.instance.publish(person!!)
     }
 
 }

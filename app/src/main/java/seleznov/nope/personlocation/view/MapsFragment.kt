@@ -11,16 +11,13 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import seleznov.nope.personlocation.R
 import seleznov.nope.personlocation.helper.PermissionInspector
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.CameraUpdate
-import android.text.method.TextKeyListener.clear
 import com.google.android.gms.maps.model.MarkerOptions
-
-
-
+import io.reactivex.disposables.Disposable
+import seleznov.nope.personlocation.helper.EventBus
+import seleznov.nope.personlocation.model.Person
 
 
 /**
@@ -32,10 +29,11 @@ class MapsFragment : SupportMapFragment(), GoogleApiClient.ConnectionCallbacks {
     private val LOCATION_PERMISSIONS = arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION)
     private val REQUEST_LOCATION_PERMISSIONS = 0
+    private val ZOOM = 12.0f
 
     private lateinit var googleMap: GoogleMap
-
     private lateinit var googleApi: GoogleApiClient
+    private lateinit var disposable : Disposable
 
     private var locationRequest = LocationRequest.create()
     private var provider = LocationServices.FusedLocationApi
@@ -63,6 +61,12 @@ class MapsFragment : SupportMapFragment(), GoogleApiClient.ConnectionCallbacks {
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 0
 
+        disposable = EventBus.instance.subscribe({ message-> if (message is Person)
+        {
+            val person = message
+            showPersonOnMap(person.lat, person.lon)
+        } })
+
     }
 
     override fun onStop() {
@@ -70,6 +74,7 @@ class MapsFragment : SupportMapFragment(), GoogleApiClient.ConnectionCallbacks {
         if(googleApi.isConnected){
             provider.removeLocationUpdates(googleApi, locationListener)
         }
+        disposable.dispose()
         googleApi.disconnect()
     }
 
@@ -100,10 +105,7 @@ class MapsFragment : SupportMapFragment(), GoogleApiClient.ConnectionCallbacks {
 
     fun showPersonOnMap(lat: Double, lng: Double){
         val latLng = LatLng(lat, lng)
-        val bounds = LatLngBounds.Builder()
-                .include(latLng).build()
-        val margin = resources.getDimensionPixelSize(R.dimen.map_margin)
-        val update = CameraUpdateFactory.newLatLngBounds(bounds, margin)
+        val update = CameraUpdateFactory.newLatLngZoom(latLng, ZOOM)
         googleMap.animateCamera(update)
 
         val myMarker = MarkerOptions()
