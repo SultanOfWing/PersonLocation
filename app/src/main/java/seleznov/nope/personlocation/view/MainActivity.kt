@@ -3,6 +3,7 @@ package seleznov.nope.personlocation.view
 import android.content.DialogInterface
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.SupportMapFragment
@@ -17,10 +18,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportFragmentManager.beginTransaction()
-                .add(R.id.list_container, PersonListFragment())
-                .add(R.id.map_container, MapsFragment())
-                .commit()
+        val fragment = supportFragmentManager.findFragmentById(R.id.list_container)
+        if(fragment == null){
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.list_container, PersonListFragment())
+                    .replace(R.id.map_container, MapsFragment())
+                    .commit()
+        }
     }
 
     override fun onResume() {

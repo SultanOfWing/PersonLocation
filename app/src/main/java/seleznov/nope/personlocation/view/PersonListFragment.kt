@@ -57,8 +57,11 @@ class PersonListFragment : Fragment(), PersonAdapter.OnItemClickListener, Google
 
         binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = personAdapter
-        viewModel.list.observe(this,
-                Observer<List<Person>> { it?.let{ personAdapter.setList(it as ArrayList<Person>)} })
+
+        viewModel.liveData.observe(this,
+                Observer<LinkedHashMap<String?, Person>>
+                { it?.let{ personAdapter.setList(ArrayList(
+                        it.values))} })
 
         locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location?) {
@@ -67,13 +70,13 @@ class PersonListFragment : Fragment(), PersonAdapter.OnItemClickListener, Google
                 viewModel.updateCurrentPosition(lat, lon)
             }
         }
-
         return binding.root;
     }
 
     override fun onStart() {
         super.onStart()
         googleApi.connect()
+        locationRequest.fastestInterval = 5000
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 0
     }
@@ -88,7 +91,6 @@ class PersonListFragment : Fragment(), PersonAdapter.OnItemClickListener, Google
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.viewModel?.list?.value = null
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -117,8 +119,10 @@ class PersonListFragment : Fragment(), PersonAdapter.OnItemClickListener, Google
     }
 
     override fun onItemClick(position: Int) {
-        val person = binding.viewModel?.list?.value?.get(position)
-        EventBus.instance.publish(person!!)
+        val col =  binding.viewModel?.liveData?.value?.values as Collection<Person>
+        val list = ArrayList(col)
+        val person = list[position]
+        EventBus.instance.publish(person)
     }
 
 

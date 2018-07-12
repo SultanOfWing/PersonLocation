@@ -3,6 +3,7 @@ package seleznov.nope.personlocation.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableField
+import android.util.Log
 import seleznov.nope.personlocation.helper.EventBus
 import seleznov.nope.personlocation.model.Person
 import seleznov.nope.personlocation.model.PersonRepository
@@ -12,15 +13,16 @@ import seleznov.nope.personlocation.model.PersonRepository
  */
 
 class PersonListViewModel : ViewModel(), PersonRepository.OnDataReadyCallback {
-
     private var personRepository = PersonRepository(this)
     val lat = ObservableField<String>()
     val lon = ObservableField<String>()
-    var list = MutableLiveData<List<Person>>()
+    var liveData = MutableLiveData<LinkedHashMap<String?, Person>>()
 
-    override fun onPersonDataReady(data: List<Person>) {
-        list.value = data
+    override fun onPersonDataReady(map: LinkedHashMap<String?, Person>) {
+        liveData.value = map
     }
+
+
     override fun onMyDataReady(data: Person) {
         lat.set(data.lat.toString())
         lon.set(data.lon.toString())
@@ -37,3 +39,4 @@ class PersonListViewModel : ViewModel(), PersonRepository.OnDataReadyCallback {
         personRepository.putData(lat, lon)
     }
 }
+
