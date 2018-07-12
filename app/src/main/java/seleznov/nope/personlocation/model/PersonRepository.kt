@@ -15,19 +15,22 @@ private const val TAG = "PersonRepository";
 
 class PersonRepository(onDataReadyCallback: OnDataReadyCallback) {
 
-
     private val personList = ArrayList<Person>()
-    private val firebaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+    private val firebaseRef: DatabaseReference = FirebaseDatabase
+            .getInstance().reference
 
     init {
         firebaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+               val me = dataSnapshot.child("me").getValue(Person::class.java)
+                onDataReadyCallback.onMyDataReady(me!!)
+
                 for (ds in dataSnapshot.child("person").children) {
                     val person = ds.getValue(Person::class.java)
                     Log.i(TAG, person.toString())
                     personList.add(person!!)
                 }
-                onDataReadyCallback.onDataReady(personList)
+                onDataReadyCallback.onPersonDataReady(personList)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -36,8 +39,15 @@ class PersonRepository(onDataReadyCallback: OnDataReadyCallback) {
         })
     }
 
+    fun putData(lat: Double?, lon: Double?){
+        val rootchild = firebaseRef.child("me")
+        rootchild.child("lat").setValue(lat)
+        rootchild.child("lon").setValue(lon)
+    }
+
     interface OnDataReadyCallback {
-        fun onDataReady(data: List<Person>)
+        fun onPersonDataReady(data: List<Person>)
+        fun onMyDataReady(data : Person)
     }
 
 }
