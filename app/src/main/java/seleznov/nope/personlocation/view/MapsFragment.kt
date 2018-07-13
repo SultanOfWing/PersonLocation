@@ -24,7 +24,6 @@ class MapsFragment : SupportMapFragment() {
     private lateinit var googleMap: GoogleMap
     private lateinit var disposable : Disposable
 
-
     override fun onCreate(p0: Bundle?) {
         super.onCreate(p0)
         getMapAsync(object : OnMapReadyCallback {
