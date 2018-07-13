@@ -51,7 +51,7 @@ class PersonListFragment : Fragment(), PersonAdapter.OnItemClickListener, Locati
 
     override fun onStart() {
         super.onStart()
-        locationManager = LocationManager(activity, this)
+        locationManager = LocationManager(context, this)
         locationManager.connect()
 
     }
