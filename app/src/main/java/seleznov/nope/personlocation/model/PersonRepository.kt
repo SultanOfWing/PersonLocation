@@ -7,9 +7,10 @@ import com.google.firebase.database.*
 /**
  * Created by User on 09.07.2018.
  */
-private const val TAG = "PersonRepository";
+
 
 class PersonRepository(onDataReadyCallback: OnDataReadyCallback) {
+    private val TAG = "PersonRepository"
 
     private val personMap = LinkedHashMap<String?, Person>()
     private val firebaseRef: DatabaseReference = FirebaseDatabase

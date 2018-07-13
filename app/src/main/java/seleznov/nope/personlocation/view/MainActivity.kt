@@ -9,10 +9,11 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.SupportMapFragment
 import seleznov.nope.personlocation.R
 
-const val REQUEST_ERROR: Int = 0
+
 
 class MainActivity : AppCompatActivity() {
 
+    val REQUEST_ERROR: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
