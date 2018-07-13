@@ -26,6 +26,7 @@ class MapsFragment : SupportMapFragment() {
 
     override fun onCreate(p0: Bundle?) {
         super.onCreate(p0)
+        retainInstance = true
         getMapAsync(object : OnMapReadyCallback {
             override fun onMapReady(map : GoogleMap) {
                 googleMap = map
@@ -48,6 +49,7 @@ class MapsFragment : SupportMapFragment() {
         disposable.dispose()
 
     }
+
 
     fun showPersonOnMap(lat: Double, lng: Double){
         val latLng = LatLng(lat, lng)
