@@ -3,6 +3,7 @@ package seleznov.nope.personlocation.helper
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat.requestPermissions
@@ -14,7 +15,7 @@ import com.google.android.gms.location.LocationServices
 /**
  * Created by User on 13.07.2018.
  */
-class LocationManager(val context : Activity, onLocationChanged: OnLocationChanged)
+class LocationManager(val context : Context, onLocationChanged: OnLocationChanged)
     : GoogleApiClient.ConnectionCallbacks{
 
     private val LOCATION_PERMISSIONS = arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION,
@@ -41,7 +42,7 @@ class LocationManager(val context : Activity, onLocationChanged: OnLocationChang
             requestUpdates()
         }
         else
-            requestPermissions(context, LOCATION_PERMISSIONS,
+            requestPermissions(context as Activity, LOCATION_PERMISSIONS,
                      Constants.REQUEST_LOCATION_PERMISSIONS)
     }
 
