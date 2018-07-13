@@ -14,8 +14,8 @@ import seleznov.nope.personlocation.model.PersonRepository
 
 class PersonListViewModel : ViewModel(), PersonRepository.OnDataReadyCallback {
     private var personRepository = PersonRepository(this)
-    val lat = ObservableField<String>()
-    val lon = ObservableField<String>()
+    val lat = ObservableField<String>("NO")
+    val lon = ObservableField<String>("DATA")
     var liveData = MutableLiveData<LinkedHashMap<String?, Person>>()
 
     override fun onPersonDataReady(map: LinkedHashMap<String?, Person>) {
@@ -29,13 +29,15 @@ class PersonListViewModel : ViewModel(), PersonRepository.OnDataReadyCallback {
     }
 
     fun showCurrentPosition(){
+        if(lat.get().equals("NO")) return
+
         val person = Person()
         person.lat = lat.get().toDouble()
         person.lon = lon.get().toDouble()
         EventBus.instance.publish(person)
     }
 
-    fun updateCurrentPosition(lat: Double?, lon: Double?){
+    fun updateCurrentPosition(lat: Double, lon: Double){
         personRepository.putData(lat, lon)
     }
 }

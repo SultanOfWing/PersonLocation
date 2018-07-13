@@ -16,5 +16,4 @@ object PermissionInspector {
 
         return result == PackageManager.PERMISSION_GRANTED
     }
-
 }

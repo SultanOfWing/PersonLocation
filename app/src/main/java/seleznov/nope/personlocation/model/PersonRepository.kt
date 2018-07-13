@@ -29,7 +29,6 @@ class PersonRepository(onDataReadyCallback: OnDataReadyCallback) {
 
         firebaseRef.child("person").addChildEventListener(object : ChildEventListener {
             override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
-
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -51,9 +50,10 @@ class PersonRepository(onDataReadyCallback: OnDataReadyCallback) {
                 Log.i(TAG, error.message)
             }
         })
+
     }
 
-    fun putData(lat: Double?, lon: Double?){
+    fun putData(lat: Double, lon: Double){
         val rootchild = firebaseRef.child("me")
         rootchild.child("lat").setValue(lat)
         rootchild.child("lon").setValue(lon)

@@ -37,8 +37,8 @@ class PersonListFragment : Fragment(), PersonAdapter.OnItemClickListener, Google
     private lateinit var googleApi: GoogleApiClient
 
     private val personAdapter = PersonAdapter(arrayListOf(), this)
-    private var locationRequest = LocationRequest.create()
-    private var provider = LocationServices.FusedLocationApi
+    private val locationRequest = LocationRequest.create()
+    private val provider = LocationServices.FusedLocationApi
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,9 +64,9 @@ class PersonListFragment : Fragment(), PersonAdapter.OnItemClickListener, Google
                         it.values))} })
 
         locationListener = object : LocationListener {
-            override fun onLocationChanged(location: Location?) {
-                val lat = location?.latitude
-                val lon = location?.longitude
+            override fun onLocationChanged(location: Location) {
+                val lat = location.latitude
+                val lon = location.longitude
                 viewModel.updateCurrentPosition(lat, lon)
             }
         }
@@ -115,7 +115,8 @@ class PersonListFragment : Fragment(), PersonAdapter.OnItemClickListener, Google
     }
 
     override fun onConnectionSuspended(p0: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
+        //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onItemClick(position: Int) {
